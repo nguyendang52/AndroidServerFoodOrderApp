@@ -20,6 +20,8 @@ public class Common {
     public static final int PICK_IMAGE_REQUEST = 71;
     public static final String baseUrl = "https://maps.googleapis.com";
     public static final String fcmUrl = "https://fcm.googleapis.com/";
+    public static String PHONE_TEXT = "userPhone";
+
     public static String converCodeToStatus(String code){
         if(code.equals("0"))
             return "Placed";

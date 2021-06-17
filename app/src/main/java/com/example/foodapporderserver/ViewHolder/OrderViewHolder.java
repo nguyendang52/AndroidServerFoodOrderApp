@@ -2,6 +2,7 @@ package com.example.foodapporderserver.ViewHolder;
 
 import android.view.ContextMenu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,24 +17,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.foodapporderserver.Interface.ItemClickListener;
 import com.example.foodapporderserver.R;
-public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener{
+public class OrderViewHolder extends RecyclerView.ViewHolder{
     public TextView txtHolderId, txtOrderStatus,txtOrderPhone, txtOrderAddress;
 
-    private ItemClickListener itemClickListener;
+    //private ItemClickListener itemClickListener;
 
+    public Button btnEdit, btnRemove, btnDetail, btnDirection;
     public OrderViewHolder(@NonNull View itemView) {
         super(itemView);
         txtHolderId = (TextView)itemView.findViewById(R.id.order_id);
         txtOrderAddress = (TextView) itemView.findViewById(R.id.order_address);
         txtOrderPhone = (TextView) itemView.findViewById(R.id.order_phone);
         txtOrderStatus = (TextView) itemView.findViewById(R.id.order_status);
-
-        itemView.setOnClickListener(this);
+        btnEdit = (Button)itemView.findViewById(R.id.btnEdit);
+        btnDetail = (Button)itemView.findViewById(R.id.btnDetail);
+        btnDirection = (Button)itemView.findViewById(R.id.btnDirection);
+        btnRemove = (Button)itemView.findViewById(R.id.btnRemove);
+        //itemView.setOnClickListener(this);
         //itemView.setOnLongClickListener(this);
-        itemView.setOnCreateContextMenuListener(this);
+        //itemView.setOnCreateContextMenuListener(this);
     }
 
-    public void setItemClickListener(ItemClickListener itemClickListener) {
+    /*public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
@@ -48,7 +53,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnC
         menu.setHeaderTitle("Select the action");
         menu.add(0,0,getAdapterPosition(), "Update");
         menu.add(0,1,getAdapterPosition(), "Delete");
-    }
+    }*/
 
     /*@Override
     public boolean onLongClick(View v) {

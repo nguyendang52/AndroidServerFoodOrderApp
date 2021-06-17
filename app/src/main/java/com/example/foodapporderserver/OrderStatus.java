@@ -38,6 +38,9 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,7 +51,6 @@ public class OrderStatus extends AppCompatActivity {
 
     FirebaseRecyclerAdapter<Request, OrderViewHolder> adapter;
     MaterialSpinner spinner;
-
     FirebaseDatabase database;
     DatabaseReference requests;
     APIService mService;
@@ -56,19 +58,17 @@ public class OrderStatus extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_status);
-
         database = FirebaseDatabase.getInstance();
         requests = database.getReference("Requests");
         mService = Common.getFCMClient();
         recyclerView = (RecyclerView) findViewById(R.id.listOrder);
+        spinner = (MaterialSpinner) findViewById(R.id.statusSpinner);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         FirebaseRecyclerOptions<Request> options = new FirebaseRecyclerOptions.Builder<Request>().setQuery(requests, Request.class).build();
         adapter = new FirebaseRecyclerAdapter<Request, OrderViewHolder>(options) {
-
-
             @NonNull
             @Override
             public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -82,29 +82,41 @@ public class OrderStatus extends AppCompatActivity {
                 holder.txtOrderStatus.setText(Common.converCodeToStatus(model.getStatus()));
                 holder.txtOrderAddress.setText(model.getAddress());
                 holder.txtOrderPhone.setText(model.getPhone());
-
-                holder.setItemClickListener(new ItemClickListener() {
+                holder.btnEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view, int position, boolean isLongClick) {
-                        if(!isLongClick){
-                            Intent trackingOrder = new Intent(OrderStatus.this, OrderTracking.class);
-                            Common.currentRequest = model;
-                            startActivity(trackingOrder);
-                        }
-                        /*else {
-                            Intent orderDetails = new Intent(OrderStatus.this,OrderDetail.class);
-                            Common.currentRequest = model;
-                            orderDetails.putExtra("OrderId", adapter.getRef(position).getKey());
-                            startActivity(orderDetails);
-
-                        }*/
+                    public void onClick(View v) {
+                        showUpdateDialog(adapter.getRef(position).getKey(), (Request) adapter.getItem(position));
                     }
                 });
+                holder.btnRemove.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteCategory(adapter.getRef(position).getKey());
+                    }
+                });
+                holder.btnDetail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent orderDetails = new Intent(OrderStatus.this,OrderDetail.class);
+                        Common.currentRequest = model;
+                        orderDetails.putExtra("OrderId", adapter.getRef(position).getKey());
+                        startActivity(orderDetails);
+                    }
+                });
+                holder.btnDirection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent trackingOrder = new Intent(OrderStatus.this, OrderTracking.class);
+                        Common.currentRequest = model;
+                        startActivity(trackingOrder);
+                    }
+                });
+
             }
         };
         recyclerView.setAdapter(adapter);
     }
-    @Override
+    /*@Override
     public boolean onContextItemSelected(MenuItem item){
         if(item.getTitle().equals(Common.UPDATE)){
             showUpdateDialog(adapter.getRef(item.getOrder()).getKey(), (Request) adapter.getItem(item.getOrder()));
@@ -114,9 +126,10 @@ public class OrderStatus extends AppCompatActivity {
 
         }
         return super.onContextItemSelected(item);
-    }
+    }*/
     private void deleteCategory(String key) {
         requests.child(key).removeValue();
+        adapter.notifyDataSetChanged();
         Toast.makeText(this,"Item deleted !!!", Toast.LENGTH_SHORT).show();
     }
 
@@ -125,10 +138,14 @@ public class OrderStatus extends AppCompatActivity {
         alertDialog.setTitle("Update Order");
         alertDialog.setMessage("please choose status");
         LayoutInflater inflater = this.getLayoutInflater();
-        View add_menu_layout = inflater.inflate(R.layout.update_order_layout, null);
-        spinner = (MaterialSpinner)findViewById(R.id.statusSpinner);
+        final View add_menu_layout = inflater.inflate(R.layout.update_order_layout, null);
+        spinner = findViewById(R.id.statusSpinner);
         spinner.setItems("Placed", "On my way", "Shipped");
-
+        /*List<String> list=new ArrayList<String>();
+        list.add("Placed");
+        list.add("On my way");
+        list.add("Shipped");*/
+        //spinner.setItems(list);
         alertDialog.setView(add_menu_layout);
         final String localKey = key;
 
@@ -141,6 +158,7 @@ public class OrderStatus extends AppCompatActivity {
                 // Update information
                 item.setStatus(String.valueOf(spinner.getSelectedIndex()));
                 requests.child(key).setValue(item);
+                adapter.notifyDataSetChanged();
                 sendOrderStatusToUser(key, item);
             }
         });
