@@ -62,7 +62,7 @@ public class OrderStatus extends AppCompatActivity {
         requests = database.getReference("Requests");
         mService = Common.getFCMClient();
         recyclerView = (RecyclerView) findViewById(R.id.listOrder);
-        spinner = (MaterialSpinner) findViewById(R.id.statusSpinner);
+
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,7 +139,7 @@ public class OrderStatus extends AppCompatActivity {
         alertDialog.setMessage("please choose status");
         LayoutInflater inflater = this.getLayoutInflater();
         final View add_menu_layout = inflater.inflate(R.layout.update_order_layout, null);
-        spinner = findViewById(R.id.statusSpinner);
+        spinner = add_menu_layout.findViewById(R.id.statusSpinner);
         spinner.setItems("Placed", "On my way", "Shipped");
         /*List<String> list=new ArrayList<String>();
         list.add("Placed");

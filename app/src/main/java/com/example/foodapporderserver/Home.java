@@ -110,7 +110,8 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         View headerView = navigationView.getHeaderView(0);
         txtFullName = (TextView)headerView.findViewById(R.id.txtFullName);
-        txtFullName.setText(Common.currentUser.getName());
+
+        txtFullName.setText("Duong Van Chinh");
 
         recycler_menu = (RecyclerView)findViewById(R.id.recycler_menu);
         recycler_menu.setHasFixedSize(true);
@@ -185,7 +186,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         String x = FirebaseInstanceId.getInstance().getToken();
         Token data = new Token(x, true);
 
-        tokens.child(Common.currentUser.getPhone()).setValue(data);
+        tokens.child("12345678").setValue(data);
     }
 
     private void updateToken(String token) {
@@ -193,6 +194,7 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         DatabaseReference tokens = db.getReference();
         String x = FirebaseInstanceId.getInstance().getToken();
         Token data = new Token(x, true);
+
         tokens.child(Common.currentUser.getPhone()).setValue(data);
     }
 
